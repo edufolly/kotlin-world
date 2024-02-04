@@ -12,7 +12,7 @@ sealed class ValidationException(
 ) : WebApplicationException(
     Response.status(status).entity(mapOf("errors" to errors)).build()
 ) {
-    class forbidden :
+    class Forbidden :
         ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.FORBIDDEN,
@@ -21,14 +21,13 @@ sealed class ValidationException(
 
         constructor(
             type: ValidationErrorType,
-            path: String,
             message: String,
+            field: String,
             value: Any?
-        ) : this(ValidationError(type, path, message, value))
+        ) : this(ValidationError(type, message, field, value))
     }
 
-
-    class notFound :
+    class NotFound :
         ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.NOT_FOUND,
@@ -37,13 +36,13 @@ sealed class ValidationException(
 
         constructor(
             type: ValidationErrorType,
-            path: String,
             message: String,
+            field: String,
             value: Any?
-        ) : this(ValidationError(type, path, message, value))
+        ) : this(ValidationError(type, message, field, value))
     }
 
-    class badRequest :
+    class BadRequest :
         ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.BAD_REQUEST,
@@ -52,9 +51,9 @@ sealed class ValidationException(
 
         constructor(
             type: ValidationErrorType,
-            path: String,
             message: String,
+            field: String,
             value: Any?
-        ) : this(ValidationError(type, path, message, value))
+        ) : this(ValidationError(type, message, field, value))
     }
 }

@@ -3,8 +3,6 @@ package io.github.edufolly
 import io.github.edufolly.entities.MyKotlinEntity
 import io.github.edufolly.utils.ValidationErrorType
 import io.github.edufolly.utils.ValidationException
-import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
-import io.quarkus.panache.common.Sort
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
@@ -14,7 +12,6 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
-import jakarta.ws.rs.WebApplicationException
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.jboss.resteasy.reactive.RestPath
@@ -31,7 +28,7 @@ class GreetingResource {
     @GET
     @Path("/count")
     @Produces(MediaType.TEXT_PLAIN)
-    fun count(@RestQuery @DefaultValue("") t: String) =
+    fun count(@RestQuery @DefaultValue("") t: String): String =
         MyKotlinEntity.search(t).count().toString()
 
     @GET
@@ -45,7 +42,11 @@ class GreetingResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun findById(id: Long) = MyKotlinEntity.findById(id)
+    fun findById(id: Long): MyKotlinEntity =
+        MyKotlinEntity.findById(id) ?: throw ValidationException.NotFound(
+            ValidationErrorType.ENTITY,
+            "entityNotFound", "id", id
+        )
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -64,9 +65,9 @@ class GreetingResource {
     @Transactional
     fun update(id: Long, entity: MyKotlinEntity): Response {
         val oldEntity: MyKotlinEntity = MyKotlinEntity.findById(id)
-            ?: throw ValidationException.notFound(
+            ?: throw ValidationException.NotFound(
                 ValidationErrorType.ENTITY,
-                "id", "entityNotFound", id
+                "entityNotFound", "id", id
             )
 
         oldEntity.name = entity.name
@@ -83,9 +84,9 @@ class GreetingResource {
     @Transactional
     fun delete(@RestPath id: Long): Response {
         val entity: MyKotlinEntity = MyKotlinEntity.findById(id)
-            ?: throw ValidationException.notFound(
+            ?: throw ValidationException.NotFound(
                 ValidationErrorType.ENTITY,
-                "id", "entityNotFound", id
+                "entityNotFound", "id", id
             )
 
         entity.deletedAt = Date()

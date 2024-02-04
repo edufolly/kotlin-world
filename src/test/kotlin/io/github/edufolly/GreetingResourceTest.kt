@@ -1,19 +1,14 @@
 package io.github.edufolly
 
-import io.quarkus.test.common.QuarkusTestResource
+import io.github.edufolly.entities.MyKotlinEntity
+import io.github.edufolly.utils.parse
 import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
-import io.restassured.module.kotlin.extensions.Given
-import io.restassured.module.kotlin.extensions.Then
-import io.restassured.module.kotlin.extensions.When
-import org.hamcrest.Matchers
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
+import io.restassured.module.kotlin.extensions.*
+import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.*
 
 /**
  * @author Eduardo Folly
@@ -23,9 +18,13 @@ import org.junit.jupiter.api.TestMethodOrder
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class GreetingResourceTest {
 
-    val empty: String = "empty";
-
     companion object {
+
+        const val EMPTY_SEARCH_TERM: String = "empty"
+        const val WRONG_ID: Int = 0
+        val entityMap = hashMapOf<String, Any>()
+        var count: Int = 1
+
         @BeforeAll
         @JvmStatic
         fun initAll() {
@@ -39,11 +38,11 @@ class GreetingResourceTest {
         Given {
             given()
         } When {
-            queryParam("t", empty)
+            queryParam("t", EMPTY_SEARCH_TERM)
             get("/count")
         } Then {
             statusCode(200)
-            body(Matchers.equalTo("0"))
+            body(equalTo("0"))
         }
     }
 
@@ -54,7 +53,7 @@ class GreetingResourceTest {
             get("/count")
         } Then {
             statusCode(200)
-            body(Matchers.equalTo("1"))
+            body(equalTo(count.toString()))
         }
     }
 
@@ -64,12 +63,12 @@ class GreetingResourceTest {
         Given {
             given()
         } When {
-            queryParam("t", empty)
+            queryParam("t", EMPTY_SEARCH_TERM)
             get()
         } Then {
             statusCode(200)
             contentType(ContentType.JSON)
-            body("$.size()", Matchers.equalTo(0))
+            body("$.size()", equalTo(0))
         }
     }
 
@@ -81,7 +80,7 @@ class GreetingResourceTest {
         } Then {
             statusCode(200)
             contentType(ContentType.JSON)
-            body("$.size()", Matchers.equalTo(1))
+            body("$.size()", equalTo(count))
         }
     }
 
@@ -98,8 +97,9 @@ class GreetingResourceTest {
             statusCode(400)
             contentType(ContentType.JSON)
             body(
-                "errors.message", Matchers.hasItems(
-                    "nameIsRequired", "descriptionIsRequired"
+                "errors.message", hasItems(
+                    "nameIsRequired",
+                    "descriptionIsRequired"
                 )
             )
         }
@@ -108,22 +108,92 @@ class GreetingResourceTest {
     @Test
     @Order(6)
     fun firstInsert() {
-        Given {
+        entityMap["name"] = "First Name Test"
+        entityMap["description"] = "First Description Test"
+
+        val entity: MyKotlinEntity = Given {
             given()
         } When {
             contentType(ContentType.JSON)
-            body(
-                mapOf(
-                    "name" to "First",
-                    "description" to "First description",
-                )
-            )
+            body(entityMap)
             post()
         } Then {
             statusCode(201)
             contentType(ContentType.JSON)
+            body(
+                "name", equalTo(entityMap["name"]),
+                "description", equalTo(entityMap["description"]),
+                "updatedAt", notNullValue(),
+            )
+        } Extract {
+            body().parse(MyKotlinEntity::class)
         }
 
+        count++
+        entityMap["id"] = entity.id!!.toInt()
+        entityMap["updatedAt"] = entity.updatedAt.time
     }
 
+    @Test
+    @Order(7)
+    fun firstGet() {
+        Given {
+            given()
+        } When {
+            pathParam("id", entityMap["id"])
+            get("/{id}")
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body("$", equalTo(entityMap))
+        }
+    }
+
+    @Test
+    @Order(8)
+    fun secondCount() {
+        When {
+            get("/count")
+        } Then {
+            statusCode(200)
+            body(equalTo(count.toString()))
+        }
+    }
+
+    @Test
+    @Order(9)
+    fun secondList() {
+        Given {
+            given()
+        } When {
+            queryParam("t", "test")
+            get()
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body(
+                "$.size()", equalTo(1),
+                "[0]", equalTo(entityMap)
+            )
+        }
+    }
+
+    @Test
+    @Order(10)
+    fun getWithWrongId() {
+        Given {
+            given()
+        } When {
+            pathParam("id", WRONG_ID)
+            get("/{id}")
+        } Then {
+            statusCode(404)
+            contentType(ContentType.JSON)
+            body(
+                "errors.message", hasItems(
+                    "entityNotFound"
+                )
+            )
+        }
+    }
 }

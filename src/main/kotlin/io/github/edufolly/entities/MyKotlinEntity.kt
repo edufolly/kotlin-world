@@ -61,7 +61,7 @@ class MyKotlinEntity : AbstractFullEntity() {
         }
 
         if (errors.isNotEmpty()) {
-            throw ValidationException.badRequest(*errors.toTypedArray())
+            throw ValidationException.BadRequest(*errors.toTypedArray())
         }
 
         return this
