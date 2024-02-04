@@ -30,7 +30,6 @@ class MyKotlinEntity : AbstractFullEntity() {
                 sort, "%$term%"
             )
         }
-
     }
 
     @Column(name = "name", nullable = false, length = 40)
@@ -39,7 +38,7 @@ class MyKotlinEntity : AbstractFullEntity() {
     @Column(name = "description", nullable = false, length = 600)
     lateinit var description: String
 
-    fun validate(): MyKotlinEntity {
+    override fun validate() : MyKotlinEntity {
         val errors = mutableListOf<ValidationError>()
 
         if (!this::name.isInitialized || name.isBlank()) {

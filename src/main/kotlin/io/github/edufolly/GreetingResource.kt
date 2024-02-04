@@ -54,8 +54,7 @@ class GreetingResource {
     @Transactional
     fun add(entity: MyKotlinEntity): Response {
         entity.validate().persist()
-
-        return Response.created(location(entity.id!!)).entity(entity).build()
+        return Response.created(path(entity.id!!)).entity(entity).build()
     }
 
     @PUT
@@ -63,38 +62,31 @@ class GreetingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun update(id: Long, entity: MyKotlinEntity): Response {
-        val oldEntity: MyKotlinEntity = MyKotlinEntity.findById(id)
-            ?: throw ValidationException.NotFound(
-                ValidationErrorType.ENTITY,
-                "entityNotFound", "id", id
-            )
-
-        oldEntity.name = entity.name
-        oldEntity.description = entity.description
-        oldEntity.updatedAt = Date()
-
-        oldEntity.validate().persist()
-
-        return Response.ok(oldEntity).location(location(oldEntity.id!!)).build()
-    }
+    fun update(id: Long, entity: MyKotlinEntity): Response =
+        MyKotlinEntity.findById(id)?.apply {
+            entity.validate()
+            name = entity.name
+            description = entity.description
+            updatedAt = Date()
+        }?.run {
+            persist()
+            Response.ok(this).location(path(this.id!!)).build()
+        } ?: throw ValidationException.NotFound(
+            ValidationErrorType.ENTITY,
+            "entityNotFound", "id", id
+        )
 
     @DELETE
     @Path("/{id}")
     @Transactional
-    fun delete(@RestPath id: Long): Response {
-        val entity: MyKotlinEntity = MyKotlinEntity.findById(id)
-            ?: throw ValidationException.NotFound(
-                ValidationErrorType.ENTITY,
-                "entityNotFound", "id", id
-            )
+    fun delete(@RestPath id: Long): Response =
+        MyKotlinEntity.findById(id)?.run {
+            delete()
+            Response.noContent().build()
+        } ?: throw ValidationException.NotFound(
+            ValidationErrorType.ENTITY,
+            "entityNotFound", "id", id
+        )
 
-        entity.deletedAt = Date()
-
-        entity.persist()
-
-        return Response.noContent().build()
-    }
-
-    private fun location(id: Long): URI = URI.create("/hello/$id")
+    private fun path(id: Long): URI = URI.create("/hello/$id")
 }

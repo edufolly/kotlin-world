@@ -189,11 +189,175 @@ class GreetingResourceTest {
         } Then {
             statusCode(404)
             contentType(ContentType.JSON)
+            body("errors.message", hasItems("entityNotFound"))
+        }
+    }
+
+    @Test
+    @Order(11)
+    fun updateWithoutFields() {
+        Given {
+            given()
+        } When {
+            contentType(ContentType.JSON)
+            body("{}")
+            pathParam("id", entityMap["id"])
+            put("/{id}")
+        } Then {
+            statusCode(400)
+            contentType(ContentType.JSON)
             body(
                 "errors.message", hasItems(
-                    "entityNotFound"
+                    "nameIsRequired",
+                    "descriptionIsRequired"
                 )
             )
+        }
+    }
+
+    @Test
+    @Order(12)
+    fun updateWithWrongId() {
+        Given {
+            given()
+        } When {
+            contentType(ContentType.JSON)
+            body(entityMap)
+            pathParam("id", WRONG_ID)
+            put("/{id}")
+        } Then {
+            statusCode(404)
+            contentType(ContentType.JSON)
+            body("errors.message", hasItems("entityNotFound"))
+        }
+    }
+
+    @Test
+    @Order(13)
+    fun firstUpdate() {
+        entityMap["name"] = "First Name Updated"
+        entityMap["description"] = "First Description Updated"
+
+        val entity: MyKotlinEntity = Given {
+            given()
+        } When {
+            contentType(ContentType.JSON)
+            body(entityMap)
+            pathParam("id", entityMap["id"])
+            put("/{id}")
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body(
+                "id", equalTo(entityMap["id"]),
+                "name", equalTo(entityMap["name"]),
+                "description", equalTo(entityMap["description"]),
+                "updatedAt", not(entityMap["updatedAt"]),
+            )
+        } Extract {
+            body().parse(MyKotlinEntity::class)
+        }
+
+        entityMap["updatedAt"] = entity.updatedAt.time
+    }
+
+    @Test
+    @Order(14)
+    fun secondGet() {
+        Given {
+            given()
+        } When {
+            pathParam("id", entityMap["id"])
+            get("/{id}")
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body("$", equalTo(entityMap))
+        }
+    }
+
+    @Test
+    @Order(15)
+    fun thirdCount() {
+        Given {
+            given()
+        } When {
+            queryParams("t", "updated")
+            get("/count")
+        } Then {
+            statusCode(200)
+            body(equalTo("1"))
+        }
+    }
+
+    @Test
+    @Order(16)
+    fun thirdList() {
+        Given {
+            given()
+        } When {
+            queryParam("t", "updated")
+            get()
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body(
+                "$.size()", equalTo(1),
+                "[0]", equalTo(entityMap)
+            )
+        }
+    }
+
+    @Test
+    @Order(17)
+    fun deleteWithWrongId() {
+        Given {
+            given()
+        } When {
+            pathParam("id", WRONG_ID)
+            delete("/{id}")
+        } Then {
+            statusCode(404)
+            contentType(ContentType.JSON)
+            body("errors.message", hasItems("entityNotFound"))
+        }
+    }
+
+    @Test
+    @Order(18)
+    fun firstDelete() {
+        Given {
+            given()
+        } When {
+            pathParam("id", entityMap["id"])
+            delete("/{id}")
+        } Then {
+            statusCode(204)
+        }
+
+        count--
+    }
+
+    @Test
+    @Order(19)
+    fun fourthCount() {
+        When {
+            get("/count")
+        } Then {
+            statusCode(200)
+            body(equalTo(count.toString()))
+        }
+    }
+
+    @Test
+    @Order(20)
+    fun fourthList() {
+        When {
+            get()
+        } Then {
+            statusCode(200)
+            contentType(ContentType.JSON)
+            body("$.size()", equalTo(count))
         }
     }
 }

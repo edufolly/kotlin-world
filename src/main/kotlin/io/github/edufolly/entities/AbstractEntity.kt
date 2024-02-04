@@ -18,4 +18,5 @@ abstract class AbstractEntity : PanacheEntityBase {
 
     override fun toString(): String = "AbstractEntity(id=$id)"
 
+    abstract fun validate(): AbstractEntity
 }
