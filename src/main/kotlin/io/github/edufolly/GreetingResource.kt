@@ -63,12 +63,11 @@ class GreetingResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     fun update(id: Long, entity: MyKotlinEntity): Response =
-        MyKotlinEntity.findById(id)?.apply {
+        MyKotlinEntity.findById(id)?.run {
             entity.validate()
             name = entity.name
             description = entity.description
             updatedAt = Date()
-        }?.run {
             persist()
             Response.ok(this).location(path(this.id!!)).build()
         } ?: throw ValidationException.NotFound(

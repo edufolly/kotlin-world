@@ -38,7 +38,7 @@ class MyKotlinEntity : AbstractFullEntity() {
     @Column(name = "description", nullable = false, length = 600)
     lateinit var description: String
 
-    override fun validate() : MyKotlinEntity {
+    override fun validate(): MyKotlinEntity {
         val errors = mutableListOf<ValidationError>()
 
         if (!this::name.isInitialized || name.isBlank()) {
