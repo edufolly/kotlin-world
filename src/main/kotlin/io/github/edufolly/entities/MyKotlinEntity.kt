@@ -8,7 +8,7 @@ import io.quarkus.hibernate.orm.panache.kotlin.PanacheQuery
 import io.quarkus.panache.common.Sort
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
-import org.hibernate.annotations.Where
+import org.hibernate.annotations.SQLRestriction
 
 /**
  * @author Eduardo Folly
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Where
 @Entity
 @Table(name = "my_kotlin_entity")
 @SQLDelete(sql = "UPDATE my_kotlin_entity SET deleted_at = NOW() WHERE id = ?")
-@Where(clause = "deleted_at = '1970-01-01 00:00:00+00:00'")
+@SQLRestriction("deleted_at = '1970-01-01 00:00:00+00:00'")
 class MyKotlinEntity : AbstractFullEntity() {
     companion object : PanacheCompanion<MyKotlinEntity> {
         fun search(

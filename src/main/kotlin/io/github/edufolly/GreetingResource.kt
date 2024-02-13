@@ -3,6 +3,7 @@ package io.github.edufolly
 import io.github.edufolly.entities.MyKotlinEntity
 import io.github.edufolly.utils.ValidationErrorType
 import io.github.edufolly.utils.ValidationException
+import io.smallrye.common.annotation.RunOnVirtualThread
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
@@ -23,6 +24,7 @@ import java.util.*
  * @author Eduardo Folly
  */
 @Path("/hello")
+@RunOnVirtualThread
 class GreetingResource {
 
     @GET

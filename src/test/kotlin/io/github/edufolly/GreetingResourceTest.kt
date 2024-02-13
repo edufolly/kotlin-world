@@ -4,6 +4,8 @@ import io.github.edufolly.entities.MyKotlinEntity
 import io.github.edufolly.utils.parse
 import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest
+import io.quarkus.test.junit5.virtual.ShouldNotPin
+import io.quarkus.test.junit5.virtual.VirtualThreadUnit
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.module.kotlin.extensions.*
@@ -16,6 +18,8 @@ import org.junit.jupiter.api.*
 @QuarkusTest
 @TestHTTPEndpoint(GreetingResource::class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@VirtualThreadUnit
+@ShouldNotPin
 class GreetingResourceTest {
 
     companion object {
