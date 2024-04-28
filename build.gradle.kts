@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.allopen") version "1.9.23"
     id("io.quarkus")
 }
 
@@ -55,6 +55,16 @@ tasks.withType<Test> {
         "java.util.logging.manager",
         "org.jboss.logmanager.LogManager"
     )
+
+    testLogging {
+        events(
+            "PASSED",
+            "SKIPPED",
+            "FAILED",
+            "STANDARD_OUT",
+            "STANDARD_ERROR"
+        )
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
