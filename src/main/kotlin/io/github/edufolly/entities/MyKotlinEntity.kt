@@ -33,15 +33,15 @@ class MyKotlinEntity : AbstractFullEntity() {
     }
 
     @Column(name = "name", nullable = false, length = 40)
-    lateinit var name: String
+    var name: String = ""
 
     @Column(name = "description", nullable = false, length = 600)
-    lateinit var description: String
+    var description: String = ""
 
     override fun validate(): MyKotlinEntity {
         val errors = mutableListOf<ValidationError>()
 
-        if (!this::name.isInitialized || name.isBlank()) {
+        if (name.isBlank()) {
             errors.add(
                 ValidationError(
                     ValidationErrorType.FIELD,
@@ -50,7 +50,7 @@ class MyKotlinEntity : AbstractFullEntity() {
             )
         }
 
-        if (!this::description.isInitialized || description.isBlank()) {
+        if (description.isBlank()) {
             errors.add(
                 ValidationError(
                     ValidationErrorType.FIELD,
