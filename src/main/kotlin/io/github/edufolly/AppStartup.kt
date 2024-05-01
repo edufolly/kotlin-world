@@ -13,7 +13,7 @@ class AppStartup {
 
     @Startup
     fun startup() {
-        ConnectionPool.start()
+        ConnectionPool.start(maxConnections = 10, idleTimeout = 10000)
     }
 
     @Shutdown

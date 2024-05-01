@@ -1,32 +1,49 @@
 package io.github.edufolly.connections
 
+import io.quarkus.logging.Log
+
 /**
  * @author Eduardo Folly
  */
-class ConnectionPool private constructor(private val maxConnections: Int = 10) {
+class ConnectionPool private constructor(
+    private val maxConnections: Int = 30,
+    private val idleTimeout: Long = 180000 // 3 min
+) {
 
     companion object {
         private var instance: ConnectionPool? = null
 
-        fun start(maxConnections: Int = 10): ConnectionPool {
+        fun start(
+            maxConnections: Int = 30,
+            idleTimeout: Long = 180000
+        ): ConnectionPool {
             if (instance == null) {
-                instance = ConnectionPool(maxConnections = maxConnections)
-                println(
+                instance = ConnectionPool(
+                    maxConnections = maxConnections,
+                    idleTimeout = idleTimeout
+                )
+                Log.info(
                     "ConnectionPool started with " +
-                            "$maxConnections maximum connections!"
+                            "$maxConnections maximum connections and " +
+                            "${idleTimeout}ms for idle timeout!"
                 )
             } else {
-                println("ConnectionPool already started!")
+                Log.info("ConnectionPool already started!")
             }
 
             return instance!!
         }
 
         fun send(host: String, port: Int, command: String): String =
-            instance!!.send(host, port, command)
+            instance?.send(host, port, command)
+                ?: throw Exception("ConnectionPool not started!")
+
+        fun countConnections(): Int = instance?.connections?.size ?: 0
+
+        fun removeIdleConnections() = instance?.removeIdleConnections()
 
         fun shutdown() {
-            instance!!.shutdown()
+            instance?.shutdown()
             instance = null
         }
     }
@@ -39,28 +56,47 @@ class ConnectionPool private constructor(private val maxConnections: Int = 10) {
         if (connection == null) {
             connection = Connection(host, port)
 
-            println("[$connection] Creating!")
-
-            // TODO: Implement a connection pool with a maximum number of connections
+            Log.info("[$connection] Creating!")
 
             if (connections.size >= maxConnections) {
                 connections.removeIf { !it.isConnected }
 
-                val oldestConnection = connections.minByOrNull { it.lastPing }
-                // TODO: Check if running.
-                println("[$oldestConnection] Removing!")
-                oldestConnection?.disconnect()
-                connections.remove(oldestConnection)
+                val oldestConnection: Connection? = connections
+                    .filter { !it.isRunning }
+                    .minByOrNull { it.lastPing }
+
+                if (oldestConnection == null) {
+                    throw Exception("No connections available!")
+                } else {
+                    Log.info("[$oldestConnection] Removing!")
+                    oldestConnection.disconnect()
+                    connections.remove(oldestConnection)
+                }
             }
 
             connections.add(connection)
             connection.connect()
         } else {
-            println("[$connection] Reusing!")
+            Log.info("[$connection] Reusing!")
         }
 
-        println("[$connection] Sending: $command")
+        Log.info("[$connection] Sending: $command")
+
         return connection.send(command)
+    }
+
+    private fun removeIdleConnections() {
+        connections.removeIf {
+            if (!it.isRunning
+                && (System.currentTimeMillis() - it.lastPing) > idleTimeout
+            ) {
+                Log.info("[$it] Removing due to inactivity!")
+                it.disconnect()
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun shutdown() {

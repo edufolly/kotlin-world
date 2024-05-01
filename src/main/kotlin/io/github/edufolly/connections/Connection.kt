@@ -16,11 +16,10 @@ class Connection(val host: String, val port: Int) {
     var isRunning = false
         private set
 
-    fun connect() {
+    fun connect(sleep: Long = (500L..1000L).random()) {
         if (isConnected) throw Exception("Already connected!")
 
         // Simulate a connection
-        val sleep = (500L..1000L).random()
         Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
@@ -30,12 +29,14 @@ class Connection(val host: String, val port: Int) {
         Log.info("[$this] Connected!")
     }
 
-    fun send(command: String): String {
+    fun send(
+        command: String,
+        sleep: Long = (800L..2500L).random(),
+    ): String {
         isRunning = true
         lastPing = System.currentTimeMillis()
 
         // Simulate a command execution
-        val sleep = (800L..2500L).random()
         Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
@@ -47,11 +48,10 @@ class Connection(val host: String, val port: Int) {
         return command;
     }
 
-    fun disconnect() {
+    fun disconnect(sleep: Long = (500L..1000L).random()) {
         if (!isConnected) throw Exception("Already disconnected!")
 
         // Simulate a disconnection
-        val sleep = (500L..1000L).random()
         Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
