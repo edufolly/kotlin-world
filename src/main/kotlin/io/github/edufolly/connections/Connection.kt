@@ -21,7 +21,7 @@ class Connection(val host: String, val port: Int) {
 
         // Simulate a connection
         val sleep = (500L..1000L).random()
-        println("[$this] Sleeping for $sleep ms...")
+        Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
         isConnected = true
@@ -36,11 +36,10 @@ class Connection(val host: String, val port: Int) {
 
         // Simulate a command execution
         val sleep = (800L..2500L).random()
-        println("[$this] Sleeping for $sleep ms...")
+        Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
         Log.info("[$this] Executing command: $command")
-
 
         isRunning = false
         lastPing = System.currentTimeMillis()
@@ -53,7 +52,7 @@ class Connection(val host: String, val port: Int) {
 
         // Simulate a disconnection
         val sleep = (500L..1000L).random()
-        println("[$this] Sleeping for $sleep ms...")
+        Log.info("[$this] Sleeping for $sleep ms...")
         Thread.sleep(sleep)
 
         isConnected = false
