@@ -34,8 +34,13 @@ class ConnectionPool private constructor(
             return instance!!
         }
 
-        fun send(host: String, port: Int, command: String): String =
-            instance?.send(host, port, command)
+        fun send(
+            host: String,
+            port: Int,
+            user: String,
+            command: String
+        ): String =
+            instance?.send(host, port, user, command)
                 ?: throw Exception("ConnectionPool not started!")
 
         fun countConnections(): Int = instance?.connections?.size ?: 0
@@ -50,11 +55,19 @@ class ConnectionPool private constructor(
 
     private val connections = ArrayList<Connection>()
 
-    private fun send(host: String, port: Int, command: String): String {
-        var connection = connections.find { it.host == host && it.port == port }
+    private fun send(
+        host: String,
+        port: Int,
+        user: String,
+        command: String
+    ): String {
+        var connection =
+            connections.find {
+                it.host == host && it.port == port && it.user == user
+            }
 
         if (connection == null) {
-            connection = Connection(host, port)
+            connection = Connection(host, port, user)
 
             Log.info("[$connection] Creating!")
 

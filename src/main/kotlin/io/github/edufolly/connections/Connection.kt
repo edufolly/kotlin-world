@@ -5,7 +5,7 @@ import io.quarkus.logging.Log
 /**
  * @author Eduardo Folly
  */
-class Connection(val host: String, val port: Int) {
+class Connection(val host: String, val port: Int, val user: String) {
 
     var lastPing = 0L
         private set
@@ -64,7 +64,8 @@ class Connection(val host: String, val port: Int) {
     override fun equals(other: Any?): Boolean = if (other is Connection)
         this.hashCode() == other.hashCode() else false
 
-    override fun hashCode(): Int = 31 * host.hashCode() + port
+    override fun hashCode(): Int =
+        31 * host.hashCode() + 7 * user.hashCode() + port
 
-    override fun toString(): String = "$host:$port"
+    override fun toString(): String = "$user@$host:$port"
 }

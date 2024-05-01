@@ -18,9 +18,10 @@ class ConnectionResource {
     @Produces(MediaType.APPLICATION_JSON)
     fun send(request: ConnectionRequest): ConnectionResult {
         val result = ConnectionPool.send(
-            host = request.host,
-            port = request.port,
-            command = request.command
+            request.host,
+            request.port,
+            request.user,
+            request.command
         )
 
         return ConnectionResult(result)
