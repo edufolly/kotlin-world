@@ -43,7 +43,7 @@ dependencies {
     testImplementation("io.quarkus.junit5:junit5-virtual-threads")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions")
-    testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
+    testImplementation(enforcedPlatform("io.qameta.allure:allure-bom:$allureVersion"))
     testImplementation("io.qameta.allure:allure-junit5")
     testImplementation("io.qameta.allure:allure-rest-assured")
 }
@@ -67,8 +67,8 @@ tasks.withType<Test> {
             "PASSED",
             "SKIPPED",
             "FAILED",
-//            "STANDARD_OUT",
-//            "STANDARD_ERROR"
+            "STANDARD_OUT",
+            "STANDARD_ERROR"
         )
     }
 }

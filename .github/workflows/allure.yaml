@@ -22,7 +22,7 @@ jobs:
           java-version: 21
 
       - name: Run tests
-        run: ./gradlew clean test
+        run: ./gradlew clean test --no-daemon
 
       - name: Load test report history
         uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Build test report
+      - name: Generate test report
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
@@ -41,7 +41,7 @@ jobs:
           allure_results: build/allure-results
 
       - name: Publish test report
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
