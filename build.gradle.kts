@@ -41,6 +41,7 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.quarkus.junit5:junit5-virtual-threads")
+    testImplementation("io.quarkus:quarkus-jacoco")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions")
     testImplementation(enforcedPlatform("io.qameta.allure:allure-bom:$allureVersion"))
