@@ -27,7 +27,7 @@ class GreetingResourceTest {
         const val EMPTY_SEARCH_TERM: String = "empty"
         const val WRONG_ID: Int = 0
         val entityMap = hashMapOf<String, Any>()
-        var count: Int = 1
+        var count: Int = 0
 
         @BeforeAll
         @JvmStatic

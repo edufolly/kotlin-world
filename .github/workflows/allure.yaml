@@ -23,6 +23,8 @@ jobs:
           cache: gradle
 
       - name: Run tests
+        if: always()
+        continue-on-error: true
         run: ./gradlew clean test --no-daemon
 
       - name: Load test report history
@@ -48,4 +50,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-history
-          # force_orphan: true
