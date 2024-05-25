@@ -25,26 +25,27 @@ jobs:
       - name: Run tests
         run: ./gradlew clean test --no-daemon
 
-#      - name: Load test report history
-#        uses: actions/checkout@v4
-#        if: always()
-#        continue-on-error: true
-#        with:
-#          ref: gh-pages
-#          path: gh-pages
+      - name: Load test report history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
 
       - name: Generate test report
         uses: simple-elf/allure-report-action@v1.9
         if: always()
         with:
           gh_pages: gh-pages
-          allure_history: ./allure-history
-          allure_results: ./build/allure-results
+          allure_history: allure-history
+          allure_results: build/allure-results
+          keep_reports: 20
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v4
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          force_orphan: true
-          publish_dir: ./allure-history
+          publish_dir: allure-history
+          # force_orphan: true
