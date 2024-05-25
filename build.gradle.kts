@@ -22,7 +22,7 @@ val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
-val allureVersion: String = "2.27.0"
+val allureVersion = "2.25.0" // TODO: 2.27.0
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
@@ -43,14 +43,9 @@ dependencies {
     testImplementation("io.quarkus.junit5:junit5-virtual-threads")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions")
-//    testImplementation("io.quarkus:quarkus-jacoco")
     testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
-// https://mvnrepository.com/artifact/io.qameta.allure/allure-junit5
     testImplementation("io.qameta.allure:allure-junit5")
-
-// https://mvnrepository.com/artifact/io.qameta.allure/allure-rest-assured
     testImplementation("io.qameta.allure:allure-rest-assured")
-
 }
 
 group = "io.github.edufolly"
@@ -72,8 +67,8 @@ tasks.withType<Test> {
             "PASSED",
             "SKIPPED",
             "FAILED",
-            "STANDARD_OUT",
-            "STANDARD_ERROR"
+//            "STANDARD_OUT",
+//            "STANDARD_ERROR"
         )
     }
 }
