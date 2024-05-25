@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.allopen") version "1.9.24"
     id("io.quarkus")
+    id("io.qameta.allure") version "2.11.2"
 }
 
 allOpen {
@@ -20,6 +21,8 @@ repositories {
 val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
+
+val allureVersion: String = "2.27.0"
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
@@ -40,7 +43,14 @@ dependencies {
     testImplementation("io.quarkus.junit5:junit5-virtual-threads")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions")
-    testImplementation("io.quarkus:quarkus-jacoco")
+//    testImplementation("io.quarkus:quarkus-jacoco")
+    testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
+// https://mvnrepository.com/artifact/io.qameta.allure/allure-junit5
+    testImplementation("io.qameta.allure:allure-junit5")
+
+// https://mvnrepository.com/artifact/io.qameta.allure/allure-rest-assured
+    testImplementation("io.qameta.allure:allure-rest-assured")
+
 }
 
 group = "io.github.edufolly"

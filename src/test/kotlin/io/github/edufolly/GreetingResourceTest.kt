@@ -19,7 +19,7 @@ import org.junit.jupiter.api.*
 @TestHTTPEndpoint(GreetingResource::class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @VirtualThreadUnit
-@ShouldNotPin
+//@ShouldNotPin
 class GreetingResourceTest {
 
     companion object {
