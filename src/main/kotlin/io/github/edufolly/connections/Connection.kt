@@ -5,8 +5,11 @@ import io.quarkus.logging.Log
 /**
  * @author Eduardo Folly
  */
-class Connection(val host: String, val port: Int, val user: String) {
-
+class Connection(
+    val host: String,
+    val port: Int,
+    val user: String,
+) {
     var lastPing = 0L
         private set
 
@@ -45,7 +48,7 @@ class Connection(val host: String, val port: Int, val user: String) {
         isRunning = false
         lastPing = System.currentTimeMillis()
 
-        return command;
+        return command
     }
 
     fun disconnect(sleep: Long = (500L..1000L).random()) {
@@ -61,8 +64,12 @@ class Connection(val host: String, val port: Int, val user: String) {
         Log.info("[$this] Disconnected!")
     }
 
-    override fun equals(other: Any?): Boolean = if (other is Connection)
-        this.hashCode() == other.hashCode() else false
+    override fun equals(other: Any?): Boolean =
+        if (other is Connection) {
+            this.hashCode() == other.hashCode()
+        } else {
+            false
+        }
 
     override fun hashCode(): Int =
         31 * host.hashCode() + 7 * user.hashCode() + port

@@ -16,18 +16,14 @@ class JacksonRegisterCustomizer : ObjectMapperCustomizer {
 
         dateModule.addSerializer(
             Date::class.java,
-            JacksonDateSerializer()
+            JacksonDateSerializer(),
         )
 
         dateModule.addDeserializer(
             Date::class.java,
-            JacksonDateDeserializer()
+            JacksonDateDeserializer(),
         )
 
         objectMapper.registerModule(dateModule)
     }
 }
-
-
-
-

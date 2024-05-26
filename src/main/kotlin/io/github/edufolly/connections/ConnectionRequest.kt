@@ -7,5 +7,5 @@ data class ConnectionRequest(
     val host: String,
     val port: Int,
     val user: String,
-    val command: String
+    val command: String,
 )

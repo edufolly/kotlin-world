@@ -21,15 +21,17 @@ class MyKotlinEntity : AbstractFullEntity() {
     companion object : PanacheCompanion<MyKotlinEntity> {
         fun search(
             term: String,
-            sort: Sort = Sort.ascending("name")
-        ): PanacheQuery<MyKotlinEntity> = if (term.isEmpty()) {
-            findAll(sort)
-        } else {
-            find(
-                "LOWER(name) LIKE ?1 OR LOWER(description) LIKE ?1",
-                sort, "%$term%"
-            )
-        }
+            sort: Sort = Sort.ascending("name"),
+        ): PanacheQuery<MyKotlinEntity> =
+            if (term.isEmpty()) {
+                findAll(sort)
+            } else {
+                find(
+                    "LOWER(name) LIKE ?1 OR LOWER(description) LIKE ?1",
+                    sort,
+                    "%$term%",
+                )
+            }
     }
 
     @Column(name = "name", nullable = false, length = 40)
@@ -45,8 +47,9 @@ class MyKotlinEntity : AbstractFullEntity() {
             errors.add(
                 ValidationError(
                     ValidationErrorType.FIELD,
-                    "nameIsRequired", "name"
-                )
+                    "nameIsRequired",
+                    "name",
+                ),
             )
         }
 
@@ -54,8 +57,9 @@ class MyKotlinEntity : AbstractFullEntity() {
             errors.add(
                 ValidationError(
                     ValidationErrorType.FIELD,
-                    "descriptionIsRequired", "description"
-                )
+                    "descriptionIsRequired",
+                    "description",
+                ),
             )
         }
 
@@ -65,5 +69,4 @@ class MyKotlinEntity : AbstractFullEntity() {
 
         return this
     }
-
 }

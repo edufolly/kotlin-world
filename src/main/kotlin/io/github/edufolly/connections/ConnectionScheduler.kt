@@ -10,15 +10,13 @@ import jakarta.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class ConnectionScheduler {
-
     @Scheduled(
         identity = "removeIdleConnections",
         every = "10s",
-        concurrentExecution = Scheduled.ConcurrentExecution.SKIP
+        concurrentExecution = Scheduled.ConcurrentExecution.SKIP,
     )
     fun removeIdleConnections() {
         Log.info("Checking for idle connections...")
         ConnectionPool.removeIdleConnections()
     }
-
 }

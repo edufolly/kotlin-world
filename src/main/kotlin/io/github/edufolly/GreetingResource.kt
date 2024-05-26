@@ -26,19 +26,19 @@ import java.util.*
 @Path("/hello")
 @RunOnVirtualThread
 class GreetingResource {
-
     @GET
     @Path("/count")
     @Produces(MediaType.TEXT_PLAIN)
-    fun count(@RestQuery @DefaultValue("") t: String): String =
-        MyKotlinEntity.search(t).count().toString()
+    fun count(
+        @RestQuery @DefaultValue("") t: String,
+    ): String = MyKotlinEntity.search(t).count().toString()
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     fun list(
         @RestQuery @DefaultValue("") t: String,
         @RestQuery @DefaultValue("0") page: Int,
-        @RestQuery @DefaultValue("20") size: Int
+        @RestQuery @DefaultValue("20") size: Int,
     ): List<MyKotlinEntity> = MyKotlinEntity.search(t).page(page, size).list()
 
     @GET
@@ -47,7 +47,9 @@ class GreetingResource {
     fun findById(id: Long): MyKotlinEntity =
         MyKotlinEntity.findById(id) ?: throw ValidationException.NotFound(
             ValidationErrorType.ENTITY,
-            "entityNotFound", "id", id
+            "entityNotFound",
+            "id",
+            id,
         )
 
     @POST
@@ -64,7 +66,10 @@ class GreetingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun update(id: Long, entity: MyKotlinEntity): Response =
+    fun update(
+        id: Long,
+        entity: MyKotlinEntity,
+    ): Response =
         MyKotlinEntity.findById(id)?.run {
             entity.validate()
             name = entity.name
@@ -74,19 +79,25 @@ class GreetingResource {
             Response.ok(this).location(path(this.id!!)).build()
         } ?: throw ValidationException.NotFound(
             ValidationErrorType.ENTITY,
-            "entityNotFound", "id", id
+            "entityNotFound",
+            "id",
+            id,
         )
 
     @DELETE
     @Path("/{id}")
     @Transactional
-    fun delete(@RestPath id: Long): Response =
+    fun delete(
+        @RestPath id: Long,
+    ): Response =
         MyKotlinEntity.findById(id)?.run {
             delete()
             Response.noContent().build()
         } ?: throw ValidationException.NotFound(
             ValidationErrorType.ENTITY,
-            "entityNotFound", "id", id
+            "entityNotFound",
+            "id",
+            id,
         )
 
     private fun path(id: Long): URI = URI.create("/hello/$id")

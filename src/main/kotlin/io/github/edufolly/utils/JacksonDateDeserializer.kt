@@ -11,6 +11,6 @@ import java.util.*
 class JacksonDateDeserializer : JsonDeserializer<Date>() {
     override fun deserialize(
         parser: JsonParser,
-        context: DeserializationContext?
+        context: DeserializationContext?,
     ): Date = Date(parser.valueAsLong)
 }

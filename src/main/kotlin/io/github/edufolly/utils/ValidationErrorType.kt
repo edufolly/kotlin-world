@@ -6,5 +6,5 @@ package io.github.edufolly.utils
 enum class ValidationErrorType {
     FIELD,
     ENTITY,
-    RULE
+    RULE,
 }

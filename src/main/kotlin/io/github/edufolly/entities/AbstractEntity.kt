@@ -11,7 +11,6 @@ import jakarta.persistence.MappedSuperclass
  */
 @MappedSuperclass
 abstract class AbstractEntity : PanacheEntityBase {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

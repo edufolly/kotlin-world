@@ -8,52 +8,49 @@ import jakarta.ws.rs.core.Response
  */
 sealed class ValidationException(
     status: Response.Status,
-    vararg errors: ValidationError
+    vararg errors: ValidationError,
 ) : WebApplicationException(
-    Response.status(status).entity(mapOf("errors" to errors)).build()
-) {
-    class Forbidden :
-        ValidationException {
+        Response.status(status).entity(mapOf("errors" to errors)).build(),
+    ) {
+    class Forbidden : ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.FORBIDDEN,
-            *errors
+            *errors,
         )
 
         constructor(
             type: ValidationErrorType,
             message: String,
             field: String,
-            value: Any?
+            value: Any?,
         ) : this(ValidationError(type, message, field, value))
     }
 
-    class NotFound :
-        ValidationException {
+    class NotFound : ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.NOT_FOUND,
-            *errors
+            *errors,
         )
 
         constructor(
             type: ValidationErrorType,
             message: String,
             field: String,
-            value: Any?
+            value: Any?,
         ) : this(ValidationError(type, message, field, value))
     }
 
-    class BadRequest :
-        ValidationException {
+    class BadRequest : ValidationException {
         constructor(vararg errors: ValidationError) : super(
             Response.Status.BAD_REQUEST,
-            *errors
+            *errors,
         )
 
         constructor(
             type: ValidationErrorType,
             message: String,
             field: String,
-            value: Any?
+            value: Any?,
         ) : this(ValidationError(type, message, field, value))
     }
 }

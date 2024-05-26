@@ -10,7 +10,6 @@ import jakarta.enterprise.context.ApplicationScoped
  */
 @ApplicationScoped
 class AppStartup {
-
     @Startup
     fun startup() {
         ConnectionPool.start(maxConnections = 10, idleTimeout = 10000)

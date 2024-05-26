@@ -12,6 +12,6 @@ class JacksonDateSerializer : JsonSerializer<Date>() {
     override fun serialize(
         value: Date?,
         gen: JsonGenerator,
-        serializers: SerializerProvider?
+        serializers: SerializerProvider?,
     ) = if (value == null) gen.writeNull() else gen.writeNumber(value.time)
 }

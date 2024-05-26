@@ -22,17 +22,11 @@ class ValidationError {
         type: ValidationErrorType,
         message: String,
         field: String,
-        value: Any?
+        value: Any?,
     ) {
         this.type = type
         this.message = message
         this.field = field
         this.value = value?.toString() ?: "[null]"
     }
-
 }
-
-
-
-
-

@@ -10,20 +10,19 @@ import java.util.*
  */
 @MappedSuperclass
 abstract class AbstractFullEntity : AbstractEntity() {
-
     @JsonIgnore
     @Column(
         name = "created_at",
         nullable = false,
         updatable = false,
-        columnDefinition = "timestamp with time zone not null"
+        columnDefinition = "timestamp with time zone not null",
     )
     var createdAt: Date = Date()
 
     @Column(
         name = "updated_at",
         nullable = false,
-        columnDefinition = "timestamp with time zone not null"
+        columnDefinition = "timestamp with time zone not null",
     )
     var updatedAt: Date = Date()
 
@@ -31,7 +30,7 @@ abstract class AbstractFullEntity : AbstractEntity() {
     @Column(
         name = "deleted_at",
         nullable = false,
-        columnDefinition = "timestamp with time zone not null"
+        columnDefinition = "timestamp with time zone not null",
     )
     var deletedAt: Date = Date(0)
 }

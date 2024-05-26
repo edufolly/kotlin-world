@@ -7,25 +7,25 @@ import io.quarkus.logging.Log
  */
 class ConnectionPool private constructor(
     private val maxConnections: Int = 30,
-    private val idleTimeout: Long = 180000 // 3 min
+    private val idleTimeout: Long = 180000, // 3 min
 ) {
-
     companion object {
         private var instance: ConnectionPool? = null
 
         fun start(
             maxConnections: Int = 30,
-            idleTimeout: Long = 180000
+            idleTimeout: Long = 180000,
         ): ConnectionPool {
             if (instance == null) {
-                instance = ConnectionPool(
-                    maxConnections = maxConnections,
-                    idleTimeout = idleTimeout
-                )
+                instance =
+                    ConnectionPool(
+                        maxConnections = maxConnections,
+                        idleTimeout = idleTimeout,
+                    )
                 Log.info(
                     "ConnectionPool started with " +
-                            "$maxConnections maximum connections and " +
-                            "${idleTimeout}ms for idle timeout!"
+                        "$maxConnections maximum connections and " +
+                        "${idleTimeout}ms for idle timeout!",
                 )
             } else {
                 Log.info("ConnectionPool already started!")
@@ -38,7 +38,7 @@ class ConnectionPool private constructor(
             host: String,
             port: Int,
             user: String,
-            command: String
+            command: String,
         ): String =
             instance?.send(host, port, user, command)
                 ?: throw Exception("ConnectionPool not started!")
@@ -59,7 +59,7 @@ class ConnectionPool private constructor(
         host: String,
         port: Int,
         user: String,
-        command: String
+        command: String,
     ): String {
         var connection =
             connections.find {
@@ -74,9 +74,10 @@ class ConnectionPool private constructor(
             if (connections.size >= maxConnections) {
                 connections.removeIf { !it.isConnected }
 
-                val oldestConnection: Connection? = connections
-                    .filter { !it.isRunning }
-                    .minByOrNull { it.lastPing }
+                val oldestConnection: Connection? =
+                    connections
+                        .filter { !it.isRunning }
+                        .minByOrNull { it.lastPing }
 
                 if (oldestConnection == null) {
                     throw Exception("No connections available!")
@@ -100,8 +101,8 @@ class ConnectionPool private constructor(
 
     private fun removeIdleConnections() {
         connections.removeIf {
-            if (!it.isRunning
-                && (System.currentTimeMillis() - it.lastPing) > idleTimeout
+            if (!it.isRunning &&
+                (System.currentTimeMillis() - it.lastPing) > idleTimeout
             ) {
                 Log.info("[$it] Removing due to inactivity!")
                 it.disconnect()
@@ -117,5 +118,4 @@ class ConnectionPool private constructor(
             it.disconnect()
         }
     }
-
 }
